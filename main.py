@@ -1,38 +1,40 @@
-from ui import start_menu
-
-
-# if __name__ == '__main__':
-#     start_menu()
-
-
 import os
 
-def check_file_type(file_path):
-    return os.path.isfile(file_path) and os.path.splitext(file_path)[1] == '.txt'
+# Input the file names
+input_file_name = input("Введите имя входного файла: ")
+output_file_name = input("Введите имя выходного файла: ")
 
-def main():
-    input_file = input("Введите имя входного файла: ")
-    output_file = input("Введите имя выходного файла: ")
-    n = int(input("Введите номер строки: "))
+# Check if the files exist
+if not (os.path.exists(input_file_name) and os.path.exists(output_file_name)):
+    print("По меньшей мере один из указанных файлов не существует. Программа завершает работу.")
+    exit()
 
-    if not check_file_type(input_file) or not check_file_type(output_file):
-        print("Внимание: по меньшей мере один из указанных файлов не существует.")
-        return
+# Check if the files are text files
+if not (input_file_name.endswith('.txt') and output_file_name.endswith('.txt')):
+    print("По меньшей мере один из указанных файлов не является текстовым. Программа завершает работу.")
+    exit()
 
-    if not os.path.isfile(input_file):
-        print(f"ОШИБКА чтения файла «{input_file}».")
-        return
+# Read the number of lines in the input file
+with open(input_file_name, 'r') as input_file:
+    n_lines_inputfile = sum(1 for line in input_file)
 
-    with open(input_file, 'r') as input_file_obj:
-        if n <= 0 or n > len(input_file_obj.readlines()):
-            print(f"ОШИБКА: Во входном файле «{input_file}» нет строки {n}.")
-            return
+# Input the line number to be copied
+N = int(input("Введите номер строки входного файла для копирования в выходной файл: "))
 
-    with open(output_file, 'a') as output_file_obj:
-        line = input_file_obj.readline()
-        output_file_obj.write(line)
+# Check if N is within the valid range
+if N <= 0 or N > n_lines_inputfile:
+    print("Введённый номер строки за пределами допустимого диапазона. Программа завершает работу.")
+    exit()
 
-    print(f"Строка {n} длиною {len(line)} была скопирована из файла «{input_file}» в конец файла «{output_file}».")
+# Read line N from the input file
+with open(input_file_name, 'r') as input_file:
+    lines = input_file.readlines()
+    line_N = lines[N - 1]
 
-if __name__ == "__main__":
-    main()
+# Output the number of characters on line N
+print(f"(i) Строка {N} входного файла содержит {len(line_N)} символ (-а, -ов).")
+
+# Copy line N from the input file to the output file
+with open(output_file_name, 'a') as output_file:
+    output_file.write(line_N)
+    print(f"(i) Строка {N} входного файла скопирована в выходной файл.")
